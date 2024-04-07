@@ -3,17 +3,41 @@
 .DATA
     ; DEFINE YOUR VARIABLES
     
+    CGEN DB 31H
+    
+    ;HEADING
+    A DB "GENRE : ACTION$"
+    D DB "GENRE : DRAMA$"
+    M DB "GENRE : MYSTERY$"
+    R DB "GENRE : ROMANCE$"
+    
     
     ; array of genres
-    ACTION DB "Al$", "DI$", "INSURGENT_ 60$","PERCY JACKSON_ 80$"
+    
+    ACTION DB "ALLEGIANT___50$", "DIVERGENT___60$", "INSURGENT___60$","JACKSON_____80$"
+    
+    DRAMA DB "HAMLET_____200$", "MACBETH____250$", "OTHELO_____100$","TEMPEST____200$"
 
+    MYSTERY DB "GONE GIRL___90$", "THE WOODS__290$", "BLUEBIRD___200$", "DEAD TIME__130$"
+    
+    ROMANCE DB "THE NOTEBOOK_9$", "JANE EYRE__400$", "OUTLANDER___80$" , "BOOK LOVERS_45$"
 
-
-
+    ;INPUT PROMPT
+    I1 DB "GIVE YOUR INPUT: $"
     
     ; array prompt
-    g1 db "CHOOSE A GENRE BY PRESSING THE CORRECT NUM KEYS$"
-    g2 db "1.ACTION  2.DRAMA   3.MYSTERY   4.ROMANCE$"
+    S1 DB "PRESS 1 TO SEARCH A BOOK BY GENRE OR 2 TO SEARCH A BOOK BY TITLE $"
+    
+    G1 db "CHOOSE A GENRE BY PRESSING THE CORRECT NUM KEYS$"
+    G2 db "1.ACTION  2.DRAMA   3.MYSTERY   4.ROMANCE$" 
+    
+    
+    ;SELECT DIFFERENT GENRE OR SPECIFIC BOOK
+    P1 DB "PRESS 1 TO CHOOSE A DIFFERENT GENRE,2 TO ADD A BOOK TO CART OR 3 TO SEARCH A    BOOK BY TITLE$"
+    
+    ;SEARCH INTRUCTIONS
+    S2 DB "TYPE THE TITLE OF THE BOOK IN BLOCK LETTERS WITH SPACE WHERE NECESSARY, THE     TITLE MUST BE AN EXACT MATCH$"
+    
     
    
 .CODE  
@@ -24,7 +48,82 @@
         
         ; YOUR CODE STARTS HERE
         
+        ; WELCOME STATEMENT START
+        
+        
+        
+        ; WELCOME STATEMENT END
+        
+        JMP BEGIN
+        
+        GEN:
+        ;NEXT LINE
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H 
+        
+        BEGIN:
+        MOV AH, 9
+        LEA DX, S1
+        INT 21H
+                                 
+        ;NEXT LINE
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H 
+        
+        ;TAKE INPUT
+        MOV AH, 9
+        LEA DX, I1
+        INT 21H
+        
+        MOV AH, 1
+        INT 21H
+        
+        CMP AL, '1'
+        JE CON
+        
+        CMP AL, '2'
+        JE SEARCH
+        
+        
+        
+        
+         
+        CON: ; CONTINUE TO GENRE
+        
         ;initial code to search by genre
+         
+        ;NEXT LINE
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        
+        
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        
         MOV AH, 9
         LEA DX, G1
         INT 21H
@@ -42,12 +141,338 @@
         MOV DL, 0AH
         INT 21H 
         
-        
+        ;PRINTING THE OPTIONS TO SELECT FROM
         MOV AH, 9
         LEA DX, G2
         INT 21H
         
+        ;NEXT LINE
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
         
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        
+        ;TAKE INPUT
+        MOV AH, 9
+        LEA DX, I1
+        INT 21H
+        
+        MOV AH, 1
+        INT 21H
+        
+        CMP AL, '1'
+        JE ACT
+        
+        CMP AL, '2'
+        JE DRA
+        
+        CMP AL, '3'
+        JE MYS
+             
+        CMP AL, '4'
+        JE ROM
+        
+                
+        
+        
+        
+        ACT:
+        ;NEXT LINE
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H 
+        
+        MOV AH, 9
+        LEA DX, A
+        INT 21H
+        
+        ;NEXT LINE
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        
+        MOV SI, 0
+        MOV CX, 4
+        
+        START:
+        MOV AH, 2
+        MOV DL, CGEN ; GENRE COUNTER
+        INT 21H
+        INC CGEN
+        
+        MOV AH, 2
+        MOV DL, "."
+        INT 21H
+        
+        MOV AH, 9
+        LEA DX, ACTION[SI]
+        INT 21H        
+        ADD SI, 000FH
+        
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+         
+        LOOP START
+        
+        MOV CGEN, 31H
+        JMP NP
+        
+        ; TERMINATE HOW???
+        
+        DRA:
+        
+        ;NEXT LINE
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        ;NEXT LINE
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        
+        MOV AH, 9
+        LEA DX, D
+        INT 21H 
+        
+        ;NEXT LINE
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        
+        MOV SI, 0
+        MOV CX, 4
+        
+        START2:
+        MOV AH, 2
+        MOV DL, CGEN ; GENRE COUNTER
+        INT 21H
+        INC CGEN
+        
+        MOV AH, 2
+        MOV DL, "."
+        INT 21H
+        
+        MOV AH, 9
+        LEA DX, DRAMA[SI]
+        INT 21H        
+        ADD SI, 000FH
+        
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+         
+        LOOP START2
+        
+        MOV CGEN, 31H
+        JMP NP
+        
+        
+        MYS:
+        ;NEXT LINE
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        ;NEXT LINE
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        
+        MOV AH, 9
+        LEA DX, M
+        INT 21H
+        
+        ;NEXT LINE
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        
+        MOV SI, 0
+        MOV CX, 4
+        
+        START3:
+        MOV AH, 2
+        MOV DL, CGEN ; GENRE COUNTER
+        INT 21H
+        INC CGEN
+        
+        MOV AH, 2
+        MOV DL, "."
+        INT 21H
+        
+        MOV AH, 9
+        LEA DX, MYSTERY[SI]
+        INT 21H        
+        ADD SI, 000FH
+        
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+         
+        LOOP START3
+        
+        
+        MOV CGEN, 31H
+        JMP NP
+        
+        ROM:
+        ;NEXT LINE
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        ;NEXT LINE
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        
+        MOV AH, 9
+        LEA DX, R
+        INT 21H
+        
+        ;NEXT LINE
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        
+        MOV SI, 0
+        MOV CX, 4
+        
+        START4:
+        MOV AH, 2
+        MOV DL, CGEN ; GENRE COUNTER
+        INT 21H
+        INC CGEN
+        
+        MOV AH, 2
+        MOV DL, "."
+        INT 21H
+        
+        MOV AH, 9
+        LEA DX, ROMANCE[SI]
+        INT 21H        
+        ADD SI, 000FH
+        
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+         
+        LOOP START4
+        
+        
+        MOV CGEN, 31H
+        JMP NP
+        
+        
+        ;PROMT TO SEE DIFFERENT GENRE OR SELECT BOOKS
+        NP:
+        ;NEXT LINE
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        ;NEXT LINE
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        
+        MOV AH, 9
+        LEA DX, P1
+        INT 21H
+        
+        ;NEXT LINE
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        
+        MOV AH, 9
+        LEA DX, I1
+        INT 21H
+        
+        MOV AH, 1
+        INT 21H
+        
+        
+        
+        CMP AL, '1'
+        JE GEN  ; START FROM THE BEGINNIG OF GENRE SELECTION
+        
+        CMP AL, '2'
+        JE CART
+         
+        CMP AL, '3'
+        JE SEARCH
+        
+        
+        ; BINARY SEARCH FUNCTIONALITY
+         SEARCH:
+        
+        ;NEXT LINE
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        
+        
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        
+       
+        MOV AH, 9
+        LEA DX, S2
+        INT 21H
+                                 
         ;NEXT LINE
         MOV AH, 2
         MOV DL, 0DH
@@ -64,25 +489,9 @@
         JMP EXIT
         
         
-        ;TEST
         
-        
-        
-        MOV SI, 0
-        START:
-        MOV AH, 9
-        LEA DX, ACTION[SI]
-        INT 21H        
-        ADD SI, 1
-        MOV AH, 2
-        MOV DL, 0DH
-        INT 21H
-        MOV DL, 0AH
-        INT 21H 
-        LOOP START
-        
-        
-        
+        ; CART FUNCTIONALITY UTILIZED
+        CART:
         
         
        
