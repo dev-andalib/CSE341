@@ -4,6 +4,8 @@
     ; DEFINE YOUR VARIABLES
     
     CGEN DB 31H
+    GL DB 0
+    GR DB ?
     
     ;HEADING
     A DB "GENRE : ACTION$"
@@ -18,25 +20,38 @@
     
     DRAMA DB "HAMLET_____200$", "MACBETH____250$", "OTHELO_____100$","TEMPEST____200$"
 
-    MYSTERY DB "GONE GIRL___90$", "THE WOODS__290$", "BLUEBIRD___200$", "DEAD TIME__130$"
+    MYSTERY DB  "BLUEBIRD___200$", "DEAD TIME__130$", "GONE GIRL___90$", "THE WOODS__290$"
     
-    ROMANCE DB "THE NOTEBOOK_9$", "JANE EYRE__400$", "OUTLANDER___80$" , "BOOK LOVERS_45$"
+    ROMANCE DB "BOOK LOVERS_45$", "CLUELESS____40$", "JANE EYRE__400$", "OUTLANDER___80$" ,    "THE NOTEBOOK_9$" 
 
     ;INPUT PROMPT
     I1 DB "GIVE YOUR INPUT: $"
     
     ; array prompt
-    S1 DB "PRESS 1 TO SEARCH A BOOK BY GENRE OR 2 TO SEARCH A BOOK BY TITLE $"
+    
     
     G1 db "CHOOSE A GENRE BY PRESSING THE CORRECT NUM KEYS$"
     G2 db "1.ACTION  2.DRAMA   3.MYSTERY   4.ROMANCE$" 
     
     
     ;SELECT DIFFERENT GENRE OR SPECIFIC BOOK
-    P1 DB "PRESS 1 TO CHOOSE A DIFFERENT GENRE,2 TO ADD A BOOK TO CART OR 3 TO SEARCH A    BOOK BY TITLE$"
+    P1 DB "PRESS 1 TO CHOOSE A DIFFERENT GENRE OR 2 TO ADD A BOOK TO CART OR 3 TO SEARCH A BOOK BY TITLE$"
     
     ;SEARCH INTRUCTIONS
     S2 DB "TYPE THE TITLE OF THE BOOK IN BLOCK LETTERS WITH SPACE WHERE NECESSARY, THE     TITLE MUST BE AN EXACT MATCH$"
+
+    
+    
+    ;NEW STUFF
+    GM DB ?
+    SCON DW 0
+    SKEY DB ?
+    MAT DB 0 ; IF THERE IS A MATCHING SUBSTIRNG OR NOT
+    
+    SP1 DB "IS THIS THE BOOK YOU ARE LOOKING?$"
+    SP2 DB "SORRY THE BOOK IS NOT AVAILABLE$"
+    
+    CG DB ?  ; CHOSEN GENRE LATER NEEDED FOR SEARCHING
     
     
    
@@ -71,42 +86,17 @@
         INT 21H 
         
         BEGIN:
-        MOV AH, 9
-        LEA DX, S1
-        INT 21H
+        
                                  
-        ;NEXT LINE
-        MOV AH, 2
-        MOV DL, 0DH
-        INT 21H
-        MOV DL, 0AH
-        INT 21H
         
-        MOV AH, 2
-        MOV DL, 0DH
-        INT 21H
-        MOV DL, 0AH
-        INT 21H 
         
-        ;TAKE INPUT
-        MOV AH, 9
-        LEA DX, I1
-        INT 21H
         
-        MOV AH, 1
-        INT 21H
-        
-        CMP AL, '1'
-        JE CON
-        
-        CMP AL, '2'
-        JE SEARCH
         
         
         
         
          
-        CON: ; CONTINUE TO GENRE
+        
         
         ;initial code to search by genre
          
@@ -167,6 +157,8 @@
         MOV AH, 1
         INT 21H
         
+        MOV CG, AL
+        
         CMP AL, '1'
         JE ACT
         
@@ -184,6 +176,7 @@
         
         
         ACT:
+        MOV GR, 0
         ;NEXT LINE
         MOV AH, 2
         MOV DL, 0DH
@@ -231,16 +224,16 @@
         INT 21H
         MOV DL, 0AH
         INT 21H
-         
+        INC GR 
         LOOP START
         
         MOV CGEN, 31H
         JMP NP
         
-        ; TERMINATE HOW???
+        
         
         DRA:
-        
+        MOV GR, 0
         ;NEXT LINE
         MOV AH, 2
         MOV DL, 0DH
@@ -288,7 +281,7 @@
         INT 21H
         MOV DL, 0AH
         INT 21H
-         
+        INC GR         
         LOOP START2
         
         MOV CGEN, 31H
@@ -296,6 +289,7 @@
         
         
         MYS:
+        MOV GR, 0
         ;NEXT LINE
         MOV AH, 2
         MOV DL, 0DH
@@ -343,7 +337,7 @@
         INT 21H
         MOV DL, 0AH
         INT 21H
-         
+        INC GR 
         LOOP START3
         
         
@@ -351,6 +345,7 @@
         JMP NP
         
         ROM:
+        MOV GR, 0
         ;NEXT LINE
         MOV AH, 2
         MOV DL, 0DH
@@ -398,7 +393,7 @@
         INT 21H
         MOV DL, 0AH
         INT 21H
-         
+        INC GR 
         LOOP START4
         
         
@@ -442,7 +437,7 @@
         
         
         CMP AL, '1'
-        JE GEN  ; START FROM THE BEGINNIG OF GENRE SELECTION
+        JE GEN  ; START FROM THE BEGINNIG OF NEW GENRE SELECTION
         
         CMP AL, '2'
         JE CART
@@ -451,7 +446,7 @@
         JE SEARCH
         
         
-        ; BINARY SEARCH FUNCTIONALITY
+        ; BINARY SEARCH FUNCTIONALITY FOR ACTION
          SEARCH:
         
         ;NEXT LINE
@@ -460,6 +455,8 @@
         INT 21H
         MOV DL, 0AH
         INT 21H
+        
+        
         
         
         MOV AH, 2
@@ -484,9 +481,271 @@
         MOV DL, 0DH
         INT 21H
         MOV DL, 0AH
-        INT 21H 
+        INT 21H
         
+        
+        
+        
+        
+        
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        
+        
+        
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        
+        MOV AH,9
+        LEA DX, I1
+        INT 21H
+         
+        
+        
+        
+        
+        
+        
+        
+        ; CORE SEARCH METHOD
+        
+        
+        
+        DEC GR 
+        INPUT1:
+        MOV AH, 1
+        INT 21H
+        MOV SKEY, AL
+        
+        CMP SKEY, ' '
+        JE INPUT1
+        
+        CMP SKEY, '_'
+        JE ENDLOOP1
+        
+        CMP M, 1
+        JE SKIP1
+        
+        
+        
+        MOVE1:
+        MOV CL, GR
+        MOV CH, GL
+        CMP CH, CL
+        JG ENDLOOP1
+        
+        
+        ;SEARCH PART
+        MOV AH, GR
+        MOV AL, GL
+        ADD AL, AH
+        MOV AH, 00H
+        MOV BL, 02H
+        DIV BL
+        MOV GM, AL
+        
+        MOV AL, GM
+        MOV AH, 00H
+        MOV BL, 10H
+        MUL BL
+        
+        MOV AH, 00H
+        MOV SI, AX
+        MOV BL, GM
+        MOV BH, 00H
+        SUB SI, BX
+        ADD SI, SCON
+        
+        
+        
+        SKIP1:
+        
+        CMP CG, '1'
+        JE ACT2
+        
+        CMP CG, '2'
+        JE DRA2
+        
+        CMP CG, '3'
+        JE MYS2
+        
+        CMP CG, '4'
+        JE ROM2
+        
+        ACT2:
+        MOV DL, ACTION[SI]
+        JMP CON
+        
+        DRA2:
+        MOV DL, DRAMA[SI]
+        JMP CON
+        
+        MYS2:
+        MOV DL, MYSTERY[SI]
+        JMP CON
+        
+        
+        ROM2:
+        MOV DL, ROMANCE[SI]
+        JMP CON
+        
+        
+        CON:
+        CMP DL, ' '
+        JE HANDLESPACE1
+        
+        
+        CMP SKEY, DL 
+        JG INCL1
+        
+        CMP SKEY, DL 
+        JL DECR1
+        
+        CMP SKEY, DL 
+        JE INCFLAG1
+        
+        
+        INCL1:
+        MOV CL, GM
+        MOV GL, CL
+        INC GL
+        MOV MAT, 0
+        
+        JMP MOVE1
+        
+        
+        DECR1:
+        MOV CL, GM
+        MOV GR, CL
+        DEC GR
+        MOV MAT, 0
+        
+        JMP MOVE1
+        
+        
+        INCFLAG1:
+        MOV MAT, 1
+        INC SI
+        INC SCON
+        ; TAKE INPUT AGAIN
+        JMP INPUT1              
+        
+        HANDLESPACE1:
+        INC SCON
+        INC SI
+        JMP SKIP1
+               
+
+        
+        
+        
+        
+        
+        
+        ENDLOOP1:
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H 
+        MOV DL, 0AH
+        INT 21H
+        
+        
+        
+        MOV DL, 01H
+        CMP MAT, DL
+        JE MATCH1
+        JNE NOTMATCH1
+        
+        MATCH1:
+        MOV AH, 9
+        SUB SI, SCON
+        
+        
+        CMP CG, '1'
+        JE ACT3
+        
+        CMP CG, '2'
+        JE DRA3
+        
+        CMP CG, '3'
+        JE MYS3
+        
+        CMP CG, '4'
+        JE ROM3
+        
+        ACT3:
+        LEA DX, ACTION[SI]
+        JMP CON2
+        
+        DRA3:
+        LEA DX, DRAMA[SI]
+        JMP CON2
+        
+        MYS3:
+        LEA DX, MYSTERY[SI]
+        JMP CON2
+        
+        
+        ROM3:
+        LEA DX, ROMANCE[SI]
+        JMP CON2
+        
+        
+        CON2: 
+        INT 21H
+        
+        
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H 
+        MOV DL, 0AH
+        INT 21H
+        
+        MOV AH, 9
+        LEA DX, SP1
+        INT 21H
+        
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H 
+        MOV DL, 0AH
+        INT 21H
+        
+        MOV SCON, 0
+        MOV MAT, 0
         JMP EXIT
+        
+        
+        NOTMATCH1:
+        MOV AH, 9
+        LEA DX, SP2
+        INT 21H
+        
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H 
+        MOV DL, 0AH
+        INT 21H
+        MOV SCON, 0
+        MOV MAT, 0
+        JMP EXIT
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
         
         
