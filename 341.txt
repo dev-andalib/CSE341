@@ -659,8 +659,50 @@
         
         MOV DL, 01H
         CMP MAT, DL
+        JE HYPHEN
+        JNE NOTMATCH1
+        
+        HYPHEN:
+        
+        INC SI
+        
+        CMP CG, '1'
+        JE ACT4
+        
+        CMP CG, '2'
+        JE DRA4
+        
+        CMP CG, '3'
+        JE MYS4
+        
+        CMP CG, '4'
+        JE ROM4
+        
+        ACT4:
+        MOV CL, ACTION[SI]
+        JMP CON3
+        
+        DRA4:
+        MOV CL, DRAMA[SI]
+        JMP CON3
+        
+        MYS4:
+        MOV CL, MYSTERY[SI]
+        JMP CON3
+        
+        
+        ROM4:
+        MOV CL, ROMANCE[SI]
+        JMP CON3
+        
+        CON3:
+        DEC SI
+        
+        CMP CL, '_'
         JE MATCH1
         JNE NOTMATCH1
+        
+        
         
         MATCH1:
         MOV AH, 9
