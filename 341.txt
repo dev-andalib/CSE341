@@ -13,6 +13,11 @@
     M DB "GENRE : MYSTERY$"
     R DB "GENRE : ROMANCE$"
     
+    ;loop var
+    LA DW 4
+    LD DW 4
+    LM DW 4
+    LR DW 4
     
     ; array of genres
     
@@ -202,7 +207,7 @@
         INT 21H
         
         MOV SI, 0
-        MOV CX, 4
+        MOV CX, LA
         
         START:
         MOV AH, 2
@@ -259,7 +264,7 @@
         INT 21H
         
         MOV SI, 0
-        MOV CX, 4
+        MOV CX, LD
         
         START2:
         MOV AH, 2
@@ -315,7 +320,7 @@
         INT 21H
         
         MOV SI, 0
-        MOV CX, 4
+        MOV CX, LM
         
         START3:
         MOV AH, 2
@@ -371,7 +376,7 @@
         INT 21H
         
         MOV SI, 0
-        MOV CX, 4
+        MOV CX, LR
         
         START4:
         MOV AH, 2
@@ -445,6 +450,7 @@
         CMP AL, '3'
         JE SEARCH
         
+        JMP EXIT
         
         ; BINARY SEARCH FUNCTIONALITY FOR ACTION
          SEARCH:
@@ -798,6 +804,10 @@
        
          
         EXIT:
+        
+        ;EXIT MESSGES
+        
+        
         
         ; YOUR CODE ENDS HERE
         
