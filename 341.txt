@@ -664,7 +664,7 @@
         
         HYPHEN:
         
-        INC SI
+        
         
         CMP CG, '1'
         JE ACT4
@@ -696,7 +696,7 @@
         JMP CON3
         
         CON3:
-        DEC SI
+        
         
         CMP CL, '_'
         JE MATCH1
