@@ -31,6 +31,7 @@
 
     ;INPUT PROMPT
     I1 DB "GIVE YOUR INPUT: $"
+    I2 DB "YOUR PREVIOUS INPUT WAS WRONG$"
     
     ; array prompt
     
@@ -154,8 +155,33 @@
         MOV DL, 0AH
         INT 21H
         
-        ;TAKE INPUT
+        ;TAKE INPUT 
+        
+        JMP GOTO1
+        
+        INPUTAGAIN1:
+       
+        
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H 
+        
         MOV AH, 9
+        LEA DX, I2
+        INT 21H
+        
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H 
+       
+        
+        
+        GOTO1: 
+        MOV AH, 9   
         LEA DX, I1
         INT 21H
         
@@ -176,7 +202,7 @@
         CMP AL, '4'
         JE ROM
         
-                
+        JMP INPUTAGAIN1         
         
         
         
@@ -426,6 +452,21 @@
         INT 21H
         
         ;NEXT LINE
+        
+        JMP GOTO2
+        INPUTAGAIN2:
+        MOV AH, 2
+        MOV DL, 0DH
+        INT 21H
+        MOV DL, 0AH
+        INT 21H
+        
+        MOV AH, 9
+        LEA DX, I2
+        INT 21H
+        
+        
+        GOTO2:
         MOV AH, 2
         MOV DL, 0DH
         INT 21H
@@ -450,7 +491,7 @@
         CMP AL, '3'
         JE SEARCH
         
-        JMP EXIT
+        JMP INPUTAGAIN2
         
         ; BINARY SEARCH FUNCTIONALITY FOR ACTION
          SEARCH:
@@ -523,7 +564,9 @@
         
         
         
-        DEC GR 
+        DEC GR
+        
+         
         INPUT1:
         MOV AH, 1
         INT 21H
